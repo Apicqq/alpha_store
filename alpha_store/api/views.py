@@ -20,7 +20,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return ProductSerializer
 
     @action(detail=True, methods=("post",), permission_classes=(IsAuthenticated,))
-    def shopping_cart(self, request, *args, **kwargs):
+    def cart(self, request, *args, **kwargs):
         return _add_to_shopping_cart(
             pk=self.get_object().pk,
             request=request,
@@ -28,14 +28,14 @@ class ProductViewSet(viewsets.ModelViewSet):
             quantity=self.request.data.get("quantity", 1)
         )
 
-    @shopping_cart.mapping.delete
+    @cart.mapping.delete
     def remove_from_shopping_cart(self, request, pk):
         return _delete_from_shopping_cart(
             pk=pk,
             request=request,
             model=ShoppingCartItem
         )
-    @shopping_cart.mapping.patch
+    @cart.mapping.patch
     def change_quantity(self, request, pk):
         pass
 
@@ -43,7 +43,14 @@ class ProductViewSet(viewsets.ModelViewSet):
 class ShoppingCartViewSet(viewsets.ModelViewSet):
     model = ShoppingCart
     serializer_class = ShoppingCartGetSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     queryset = ShoppingCart.objects.all()
-    pagination_class = None
-    http_method_names = ("get",)
+    # http_method_names = ("get", "delete",)
+
+
+    @action(detail=False, methods=("post",), permission_classes=(IsAuthenticated,))
+    def clear(self, request):
+        for product in ShoppingCartItem.objects.filter(
+            cart=request.user.shopping_cart.first()
+        ):
+            print(product)
