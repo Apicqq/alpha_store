@@ -99,6 +99,7 @@ class ShoppingCartItem(models.Model):
     )
     product = models.ForeignKey(
         Product,
+        related_name="products",
         verbose_name="Продукт",
         on_delete=models.CASCADE
     )
