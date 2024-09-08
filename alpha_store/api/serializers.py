@@ -22,7 +22,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             "category",
             "subcategory",
             "images",
-        ]  # FIXME
+        ]
 
     def get_images(self, obj):
         images = dict()
@@ -42,7 +42,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ShoppingCartGetSerializer(serializers.ModelSerializer):
     products = serializers.SerializerMethodField("get_products")
-    amount_of_products = serializers.SerializerMethodField("get_amount_of_products")
+    amount_of_products = serializers.SerializerMethodField(
+        "get_amount_of_products")
     total_price = serializers.SerializerMethodField("get_total_price")
 
     def get_products(self, obj):
@@ -53,20 +54,22 @@ class ShoppingCartGetSerializer(serializers.ModelSerializer):
             many=True
         ).data
 
-
     def get_amount_of_products(self, obj):
         return obj.cart_items.count()
 
     def get_total_price(self, obj):
-        return sum(item.product.price * item.quantity for item in obj.cart_items.all())
+        return sum(item.product.price * item.quantity for item in
+                   obj.cart_items.all())
 
     class Meta:
         model = ShoppingCart
         fields = ("products", "amount_of_products", "total_price")
 
+
 class ShoppingCartItemSerializer(serializers.ModelSerializer):
     price = serializers.ReadOnlyField(source="product.price")
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all())
 
     class Meta:
         model = ShoppingCartItem
@@ -82,5 +85,9 @@ class ShoppingCartItemSerializer(serializers.ModelSerializer):
             item.quantity += quantity
             item.save()
         except ShoppingCartItem.DoesNotExist:
-            item = ShoppingCartItem.objects.create(cart=cart, product=product, quantity=quantity)
+            item = ShoppingCartItem.objects.create(
+                cart=cart,
+                product=product,
+                quantity=quantity
+            )
         return item
