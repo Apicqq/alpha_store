@@ -1,11 +1,11 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from api.serializers import ProductSerializer, ProductListSerializer, \
-    ShoppingCartGetSerializer
-from store.models import Product, ShoppingCart
-from core.services import _add_to_shopping_cart
+    ShoppingCartGetSerializer, ShoppingCartItemSerializer
+from store.models import Product, ShoppingCart, ShoppingCartItem
+from core.services import _add_to_shopping_cart, _delete_from_shopping_cart
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -19,16 +19,24 @@ class ProductViewSet(viewsets.ModelViewSet):
             return ProductListSerializer
         return ProductSerializer
 
-    @action(detail=True, methods=("post",))
-    def add_to_shopping_cart(self, request, pk):
+    @action(detail=True, methods=("post",), permission_classes=(IsAuthenticated,))
+    def shopping_cart(self, request, *args, **kwargs):
         return _add_to_shopping_cart(
-            pk=pk,
+            pk=self.get_object().pk,
             request=request,
-            serializer_class=ShoppingCartGetSerializer
+            serializer_class=ShoppingCartItemSerializer,
+            quantity=self.request.data.get("quantity", 1)
         )
 
-    @add_to_shopping_cart.mapping.delete
-    def remove_from_shopping_cart(self, request):
+    @shopping_cart.mapping.delete
+    def remove_from_shopping_cart(self, request, pk):
+        return _delete_from_shopping_cart(
+            pk=pk,
+            request=request,
+            model=ShoppingCartItem
+        )
+    @shopping_cart.mapping.patch
+    def change_quantity(self, request, pk):
         pass
 
 
@@ -39,4 +47,3 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     queryset = ShoppingCart.objects.all()
     pagination_class = None
     http_method_names = ("get",)
-
