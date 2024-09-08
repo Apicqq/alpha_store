@@ -1,8 +1,9 @@
-from typing import TypeVar
+from typing import TypeVar, Type
 
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 
 from store.models import User, ShoppingCart
 
@@ -10,8 +11,8 @@ UserType = TypeVar("UserType", bound=User)
 CartType = TypeVar("CartType", bound=ShoppingCart)
 
 
-def _add_to_shopping_cart(pk: int, request: Request, serializer_class,
-                          quantity):
+def _add_to_shopping_cart(pk: int, request: Request, serializer_class: Type[Serializer],
+                          quantity) -> Response:
     shopping_cart = get_or_create_shopping_cart(user=request.user)
     serializer = serializer_class(
         data=dict(
@@ -26,7 +27,7 @@ def _add_to_shopping_cart(pk: int, request: Request, serializer_class,
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-def _delete_from_shopping_cart(pk: int, request: Request, model):
+def _delete_from_shopping_cart(pk: int, request: Request, model) -> Response:
     if not model.objects.filter(
             cart=request.user.shopping_cart.first(),
             pk=pk
@@ -36,7 +37,7 @@ def _delete_from_shopping_cart(pk: int, request: Request, model):
                             message="Запрашиваемый объект не найден"
                         ))
     model.objects.filter(
-        cart=request.user.shopping_cart.first(),
+        cart=request.user.cart.first(),
         pk=pk
     ).delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
