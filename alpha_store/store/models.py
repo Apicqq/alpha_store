@@ -79,15 +79,41 @@ class ShoppingCart(models.Model):
         verbose_name="Пользователь",
         on_delete=models.CASCADE
     )
-    products = models.ForeignKey(
-        Product,
-        verbose_name="Продукты",
-        on_delete=models.CASCADE
-    )
+
+
 
     class Meta:
         default_related_name = "shopping_cart"
         verbose_name = "Корзина"
 
     def __str__(self):
-        return f"{type(self).__name__} of user {self.user}: {self.products}"
+        return f"{type(self).__name__} пользователя {self.user}"
+
+
+class ShoppingCartItem(models.Model):
+    cart = models.ForeignKey(
+        ShoppingCart,
+        verbose_name="Корзина с товарами",
+        on_delete=models.CASCADE,
+        related_name="cart_items",
+    )
+    product = models.ForeignKey(
+        Product,
+        verbose_name="Продукт",
+        on_delete=models.CASCADE
+    )
+    quantity = models.PositiveSmallIntegerField(
+        "Количество",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(100),
+        ]
+    )
+
+    class Meta:
+        default_related_name = "shopping_cart_items"
+        verbose_name = "Элемент корзины"
+        verbose_name_plural = "Элементы корзины"
+
+    def __str__(self):
+        return f"{self.product}: {self.quantity}"
