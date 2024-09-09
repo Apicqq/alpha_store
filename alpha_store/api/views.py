@@ -6,10 +6,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from api.serializers import ProductSerializer, ProductListSerializer, \
     ShoppingCartGetSerializer, ShoppingCartItemSerializer
 from store.models import Product, ShoppingCart, ShoppingCartItem
-from core.services import _add_to_shopping_cart, _delete_from_shopping_cart
+from core.services import _add_to_shopping_cart, _delete_from_shopping_cart, _adjust_quantity
 
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     model = Product
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
@@ -37,8 +37,14 @@ class ProductViewSet(viewsets.ModelViewSet):
             model=ShoppingCartItem
         )
     @cart.mapping.patch
-    def change_quantity(self, request, pk):
-        pass
+    def change_quantity(self, request, *args, **kwargs):
+        return _adjust_quantity(
+            pk=self.get_object().pk,
+            request=request,
+            serializer_class=ShoppingCartItemSerializer,
+            quantity=self.request.data.get("quantity", 1)
+        )
+
 
 
 class ShoppingCartViewSet(viewsets.ReadOnlyModelViewSet):
