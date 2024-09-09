@@ -10,7 +10,8 @@ from api.serializers import (
     ProductListSerializer,
     ShoppingCartGetSerializer,
     ShoppingCartItemSerializer,
-    CategorySerializer, QuantitySerializer,
+    CategorySerializer,
+    QuantitySerializer,
 )
 from store.models import Product, ShoppingCart, ShoppingCartItem, Category
 from core.services import (
@@ -44,7 +45,6 @@ class ProductViewSet(ReadOnlyModelViewSet):
         if self.action in ("list", "retrieve"):
             return ProductListSerializer
         return ProductSerializer
-
 
     @swagger_auto_schema(request_body=QuantitySerializer)
     @action(

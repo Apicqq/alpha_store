@@ -18,6 +18,7 @@ class QuantitySerializer(Serializer):
 
     quantity: int = serializers.IntegerField(min_value=1)
 
+
 class ProductSerializer(serializers.ModelSerializer):
     """
     Сериализатор для модели Product.
