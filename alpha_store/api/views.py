@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
@@ -40,12 +41,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         pass
 
 
-class ShoppingCartViewSet(viewsets.ModelViewSet):
+class ShoppingCartViewSet(viewsets.ReadOnlyModelViewSet):
     model = ShoppingCart
     serializer_class = ShoppingCartGetSerializer
     permission_classes = (IsAuthenticated,)
     queryset = ShoppingCart.objects.all()
-    # http_method_names = ("get", "delete",)
 
 
     @action(detail=False, methods=("post",), permission_classes=(IsAuthenticated,))
@@ -53,4 +53,5 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
         for product in ShoppingCartItem.objects.filter(
             cart=request.user.shopping_cart.first()
         ):
-            print(product)
+            product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
