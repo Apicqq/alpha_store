@@ -1,4 +1,4 @@
-def print_numbers(num: int):
+def print_numbers(num: int) -> str:
     return "".join([str(number) * number for number in range(1, num + 1)])
 
 
