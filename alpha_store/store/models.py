@@ -44,6 +44,7 @@ class Product(BaseNameSlugModel):
         default_related_name = "products"
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
+        ordering = ("name",)
 
 
 
@@ -58,6 +59,7 @@ class Category(BaseNameSlugModel):
         default_related_name = "categories"
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+        ordering = ("name",)
 
 
 
