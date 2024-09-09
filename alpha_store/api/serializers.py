@@ -5,17 +5,28 @@ from store.models import Product, ShoppingCart, ShoppingCartItem, Category, \
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели Product.
+    """
+
     class Meta:
         model = Product
         fields = "__all__"
 
 
 class ProductListSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели Product.
+
+    Дополнительно реализовано поле images, содержащее ссылки на изображения
+    продуктов в трёх форматах.
+    """
+
     images = serializers.SerializerMethodField("get_images")
 
     class Meta:
         model = Product
-        fields = [
+        fields = (
             "id",
             "name",
             "slug",
@@ -23,7 +34,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             "category",
             "subcategory",
             "images",
-        ]
+        )
 
     def get_images(self, obj):
         images = dict()
@@ -35,6 +46,9 @@ class ProductListSerializer(serializers.ModelSerializer):
         return images
 
 class SubCategorySerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели SubCategory.
+    """
 
     class Meta:
         model = SubCategory
@@ -42,6 +56,14 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели Category.
+
+    Дополнительно реализовано поле subcategories, которое содержит в себе
+    вложенный сериализатор SubCategorySerializer, представляющий собой
+    связанные подкатегории.
+    """
+
     subcategories = SubCategorySerializer(many=True, read_only=True)
 
     class Meta:
@@ -50,6 +72,15 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartGetSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели ShoppingCart.
+
+    Реализованы такие дополнительне поля, как products (отвечаает за вывод
+    списка продуктов в корзине), amount_of_products (отображает общее
+    количество продуктов в корзине пользователя), и total_price (это поле
+    рассчитывает стоимость всех продуктов в корзине, учитывая их количество).
+    """
+
     products = serializers.SerializerMethodField("get_products")
     amount_of_products = serializers.SerializerMethodField(
         "get_amount_of_products")
@@ -76,6 +107,14 @@ class ShoppingCartGetSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartItemSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для продукта, находящегося в продуктовой корзине.
+
+    Дополнительно реализовано поле price (это поле подтягивает стоимость
+    продукта в корзине), а также product (подтягивает продукт из соответствующей
+    модели).
+    """
+
     price = serializers.ReadOnlyField(source="product.price")
     product = serializers.PrimaryKeyRelatedField(
         queryset=Product.objects.all())

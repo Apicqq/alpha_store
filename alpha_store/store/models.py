@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
+from core.constants import NumericalValues as Nv
 from core.models import BaseNameSlugModel
 
 User = get_user_model()
@@ -35,8 +36,8 @@ class Product(BaseNameSlugModel):
     price = models.PositiveSmallIntegerField(
         "Цена продукта",
         validators=[
-            MinValueValidator(0),
-            MaxValueValidator(100000),
+            MinValueValidator(Nv.PRICE_MIN_VALUE),
+            MaxValueValidator(Nv.PRICE_MAX_VALUE),
         ]
     )
 
@@ -83,8 +84,6 @@ class ShoppingCart(models.Model):
         on_delete=models.CASCADE
     )
 
-
-
     class Meta:
         default_related_name = "shopping_cart"
         verbose_name = "Корзина"
@@ -109,13 +108,12 @@ class ShoppingCartItem(models.Model):
     quantity = models.PositiveSmallIntegerField(
         "Количество",
         validators=[
-            MinValueValidator(1),
-            MaxValueValidator(100),
+            MinValueValidator(Nv.ITEM_MIN_QUANTITY_IN_CART),
+            MaxValueValidator(Nv.ITEM_MAX_QUANTITY_IN_CART),
         ]
     )
 
     class Meta:
-        default_related_name = "shopping_cart_items"
         verbose_name = "Элемент корзины"
         verbose_name_plural = "Элементы корзины"
 
