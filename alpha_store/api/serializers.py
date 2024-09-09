@@ -1,5 +1,6 @@
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
+from rest_framework.serializers import Serializer
 
 from store.models import (
     Product,
@@ -9,6 +10,13 @@ from store.models import (
     SubCategory,
 )
 
+
+class QuantitySerializer(Serializer):
+    """
+    Сериализатор для изменения количества продукта в корзине.
+    """
+
+    quantity: int = serializers.IntegerField(min_value=1)
 
 class ProductSerializer(serializers.ModelSerializer):
     """

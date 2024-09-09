@@ -10,7 +10,7 @@ from api.serializers import (
     ProductListSerializer,
     ShoppingCartGetSerializer,
     ShoppingCartItemSerializer,
-    CategorySerializer,
+    CategorySerializer, QuantitySerializer,
 )
 from store.models import Product, ShoppingCart, ShoppingCartItem, Category
 from core.services import (
@@ -45,6 +45,8 @@ class ProductViewSet(ReadOnlyModelViewSet):
             return ProductListSerializer
         return ProductSerializer
 
+
+    @swagger_auto_schema(request_body=QuantitySerializer)
     @action(
         detail=True, methods=("post",), permission_classes=(IsAuthenticated,)
     )
@@ -68,6 +70,7 @@ class ProductViewSet(ReadOnlyModelViewSet):
             pk=pk, request=request, model=ShoppingCartItem
         )
 
+    @swagger_auto_schema(request_body=QuantitySerializer)
     @cart.mapping.patch
     def change_quantity(self, request, *args, **kwargs):
         """
