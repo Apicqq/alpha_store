@@ -2,10 +2,10 @@ from enum import IntEnum, StrEnum
 
 
 class ErrorMessages(StrEnum):
-    REQUESTED_OBJECT_NOT_FOUND = (
-        "Запрашиваемый объект не найден"
+    REQUESTED_OBJECT_NOT_FOUND = "Запрашиваемый объект не найден"
+    REQUESTED_OBJECT_NOT_FOUND_IN_CART = (
+        REQUESTED_OBJECT_NOT_FOUND + " в вашей корзине"
     )
-    REQUESTED_OBJECT_NOT_FOUND_IN_CART = REQUESTED_OBJECT_NOT_FOUND + " в вашей корзине"
 
 
 class NumericalValues(IntEnum):

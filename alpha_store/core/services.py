@@ -13,9 +13,12 @@ UserType = TypeVar("UserType", bound=User)
 CartType = TypeVar("CartType", bound=ShoppingCart)
 
 
-def _add_to_shopping_cart(pk: int, request: Request,
-                          serializer_class: Type[Serializer],
-                          quantity: int) -> Response:
+def _add_to_shopping_cart(
+    pk: int,
+    request: Request,
+    serializer_class: Type[Serializer],
+    quantity: int,
+) -> Response:
     """
     Добавление продукта в корзину пользователю.
     :param pk: PK продукта.
@@ -26,11 +29,7 @@ def _add_to_shopping_cart(pk: int, request: Request,
     """
     shopping_cart = get_or_create_shopping_cart(user=request.user)
     serializer = serializer_class(
-        data=dict(
-            cart=shopping_cart.pk,
-            product=pk,
-            quantity=quantity
-        ),
+        data=dict(cart=shopping_cart.pk, product=pk, quantity=quantity),
         context=dict(request=request),
     )
     serializer.is_valid(raise_exception=True)
@@ -38,7 +37,9 @@ def _add_to_shopping_cart(pk: int, request: Request,
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-def _delete_from_shopping_cart(pk: int, request: Request, model: Type[Model]) -> Response:
+def _delete_from_shopping_cart(
+    pk: int, request: Request, model: Type[Model]
+) -> Response:
     """
     Удаление продукта из корзины пользователя.
     :param pk: PK продукта.
@@ -48,17 +49,13 @@ def _delete_from_shopping_cart(pk: int, request: Request, model: Type[Model]) ->
     продукт не был найден в корзине.
     """
     if not model.objects.filter(
-            cart=request.user.shopping_cart.first(),
-            pk=pk
+        cart=request.user.shopping_cart.first(), pk=pk
     ).exists():
-        return Response(status=status.HTTP_400_BAD_REQUEST,
-                        data=dict(
-                            message=Em.REQUESTED_OBJECT_NOT_FOUND
-                        ))
-    model.objects.filter(
-        cart=request.user.cart.first(),
-        pk=pk
-    ).delete()
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+            data=dict(message=Em.REQUESTED_OBJECT_NOT_FOUND),
+        )
+    model.objects.filter(cart=request.user.cart.first(), pk=pk).delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -81,8 +78,12 @@ def get_or_create_shopping_cart(user: UserType) -> CartType:
     return shopping_cart
 
 
-def _adjust_quantity(pk: int, request: Request, serializer_class: Type[Serializer],
-                     quantity: int) -> Response:
+def _adjust_quantity(
+    pk: int,
+    request: Request,
+    serializer_class: Type[Serializer],
+    quantity: int,
+) -> Response:
     """
     Метод для правки количества продукта в корзине пользователя.
 
@@ -103,19 +104,15 @@ def _adjust_quantity(pk: int, request: Request, serializer_class: Type[Serialize
     try:
         item = shopping_cart.cart_items.get(product=pk)
     except ShoppingCartItem.DoesNotExist:
-        return Response(status=status.HTTP_400_BAD_REQUEST,
-                        data=dict(
-                            message=Em.REQUESTED_OBJECT_NOT_FOUND_IN_CART
-                        ))
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+            data=dict(message=Em.REQUESTED_OBJECT_NOT_FOUND_IN_CART),
+        )
 
     serializer = serializer_class(
-        data=dict(
-            cart=shopping_cart.pk,
-            product=pk,
-            quantity=quantity
-        ),
+        data=dict(cart=shopping_cart.pk, product=pk, quantity=quantity),
         context=dict(request=request),
-        partial=True
+        partial=True,
     )
     serializer.is_valid(raise_exception=True)
     serializer.update(instance=item, validated_data=serializer.validated_data)

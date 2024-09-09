@@ -16,78 +16,222 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Название')),
-                ('slug', models.SlugField(max_length=255, verbose_name='Слаг')),
-                ('image', models.ImageField(blank=True, upload_to='images/categories', verbose_name='Изображение')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, verbose_name="Название"),
+                ),
+                (
+                    "slug",
+                    models.SlugField(max_length=255, verbose_name="Слаг"),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        upload_to="images/categories",
+                        verbose_name="Изображение",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Категория',
-                'verbose_name_plural': 'Категории',
-                'default_related_name': 'categories',
+                "verbose_name": "Категория",
+                "verbose_name_plural": "Категории",
+                "default_related_name": "categories",
             },
         ),
         migrations.CreateModel(
-            name='Product',
+            name="Product",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Название')),
-                ('slug', models.SlugField(max_length=255, verbose_name='Слаг')),
-                ('thumbnail', models.ImageField(blank=True, upload_to='images/thumbnails', verbose_name='Превью')),
-                ('medium_image', models.ImageField(blank=True, upload_to='images/medium', verbose_name='Изображение среднего размера')),
-                ('large_image', models.ImageField(blank=True, upload_to='images/large', verbose_name='Изображение большого размера')),
-                ('price', models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100000)], verbose_name='Цена продукта')),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store.category', verbose_name='Категория продукта')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, verbose_name="Название"),
+                ),
+                (
+                    "slug",
+                    models.SlugField(max_length=255, verbose_name="Слаг"),
+                ),
+                (
+                    "thumbnail",
+                    models.ImageField(
+                        blank=True,
+                        upload_to="images/thumbnails",
+                        verbose_name="Превью",
+                    ),
+                ),
+                (
+                    "medium_image",
+                    models.ImageField(
+                        blank=True,
+                        upload_to="images/medium",
+                        verbose_name="Изображение среднего размера",
+                    ),
+                ),
+                (
+                    "large_image",
+                    models.ImageField(
+                        blank=True,
+                        upload_to="images/large",
+                        verbose_name="Изображение большого размера",
+                    ),
+                ),
+                (
+                    "price",
+                    models.PositiveSmallIntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(100000),
+                        ],
+                        verbose_name="Цена продукта",
+                    ),
+                ),
+                (
+                    "category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="store.category",
+                        verbose_name="Категория продукта",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Продукт',
-                'verbose_name_plural': 'Продукты',
-                'default_related_name': 'products',
+                "verbose_name": "Продукт",
+                "verbose_name_plural": "Продукты",
+                "default_related_name": "products",
             },
         ),
         migrations.CreateModel(
-            name='ShoppingCart',
+            name="ShoppingCart",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Пользователь",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Корзина',
-                'default_related_name': 'shopping_cart',
+                "verbose_name": "Корзина",
+                "default_related_name": "shopping_cart",
             },
         ),
         migrations.CreateModel(
-            name='ShoppingCartItem',
+            name="ShoppingCartItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(100)], verbose_name='Количество')),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cart_items', to='store.shoppingcart', verbose_name='Корзина с товарами')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store.product', verbose_name='Продукт')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "quantity",
+                    models.PositiveSmallIntegerField(
+                        validators=[
+                            django.core.validators.MinValueValidator(1),
+                            django.core.validators.MaxValueValidator(100),
+                        ],
+                        verbose_name="Количество",
+                    ),
+                ),
+                (
+                    "cart",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cart_items",
+                        to="store.shoppingcart",
+                        verbose_name="Корзина с товарами",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="store.product",
+                        verbose_name="Продукт",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Элемент корзины',
-                'verbose_name_plural': 'Элементы корзины',
-                'default_related_name': 'shopping_cart_items',
+                "verbose_name": "Элемент корзины",
+                "verbose_name_plural": "Элементы корзины",
+                "default_related_name": "shopping_cart_items",
             },
         ),
         migrations.CreateModel(
-            name='SubCategory',
+            name="SubCategory",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Название')),
-                ('slug', models.SlugField(max_length=255, verbose_name='Слаг')),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store.category', verbose_name='Категория')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, verbose_name="Название"),
+                ),
+                (
+                    "slug",
+                    models.SlugField(max_length=255, verbose_name="Слаг"),
+                ),
+                (
+                    "category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="store.category",
+                        verbose_name="Категория",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Подкатегория',
-                'verbose_name_plural': 'Подкатегории',
+                "verbose_name": "Подкатегория",
+                "verbose_name_plural": "Подкатегории",
             },
         ),
         migrations.AddField(
-            model_name='product',
-            name='subcategory',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store.subcategory', verbose_name='Подкатегория продукта'),
+            model_name="product",
+            name="subcategory",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="store.subcategory",
+                verbose_name="Подкатегория продукта",
+            ),
         ),
     ]

@@ -8,13 +8,10 @@ class BaseNameSlugModel(models.Model):
         "Название",
         max_length=Nv.NAME_MAX_LENGTH,
     )
-    slug = models.SlugField(
-        "Слаг",
-        max_length=Nv.NAME_MAX_LENGTH
-    )
+    slug = models.SlugField("Слаг", max_length=Nv.NAME_MAX_LENGTH)
 
     class Meta:
         abstract = True
 
     def __str__(self):
-        return self.name[:Nv.NAME_TRUNCATE_VALUE]
+        return self.name[: Nv.NAME_TRUNCATE_VALUE]

@@ -7,6 +7,7 @@ from core.models import BaseNameSlugModel
 
 User = get_user_model()
 
+
 class Product(BaseNameSlugModel):
     thumbnail = models.ImageField(
         "Превью",
@@ -24,21 +25,19 @@ class Product(BaseNameSlugModel):
         blank=True,
     )
     category = models.ForeignKey(
-        "Category",
-        verbose_name="Категория продукта",
-        on_delete=models.CASCADE
+        "Category", verbose_name="Категория продукта", on_delete=models.CASCADE
     )
     subcategory = models.ForeignKey(
         "SubCategory",
         verbose_name="Подкатегория продукта",
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     price = models.PositiveSmallIntegerField(
         "Цена продукта",
         validators=[
             MinValueValidator(Nv.PRICE_MIN_VALUE),
             MaxValueValidator(Nv.PRICE_MAX_VALUE),
-        ]
+        ],
     )
 
     class Meta:
@@ -48,12 +47,9 @@ class Product(BaseNameSlugModel):
         ordering = ("name",)
 
 
-
 class Category(BaseNameSlugModel):
     image = models.ImageField(
-        "Изображение",
-        upload_to="images/categories",
-        blank=True
+        "Изображение", upload_to="images/categories", blank=True
     )
 
     class Meta:
@@ -63,13 +59,12 @@ class Category(BaseNameSlugModel):
         ordering = ("name",)
 
 
-
 class SubCategory(BaseNameSlugModel):
     category = models.ForeignKey(
         Category,
         verbose_name="Категория",
         on_delete=models.CASCADE,
-        related_name="subcategories"
+        related_name="subcategories",
     )
 
     class Meta:
@@ -79,9 +74,7 @@ class SubCategory(BaseNameSlugModel):
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
-        User,
-        verbose_name="Пользователь",
-        on_delete=models.CASCADE
+        User, verbose_name="Пользователь", on_delete=models.CASCADE
     )
 
     class Meta:
@@ -103,14 +96,14 @@ class ShoppingCartItem(models.Model):
         Product,
         related_name="products",
         verbose_name="Продукт",
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     quantity = models.PositiveSmallIntegerField(
         "Количество",
         validators=[
             MinValueValidator(Nv.ITEM_MIN_QUANTITY_IN_CART),
             MaxValueValidator(Nv.ITEM_MAX_QUANTITY_IN_CART),
-        ]
+        ],
     )
 
     class Meta:

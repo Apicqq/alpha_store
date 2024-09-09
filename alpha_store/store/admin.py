@@ -21,13 +21,20 @@ class ProductInline(admin.TabularInline):
         "slug",
     )
 
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     """
     Базовая админ-панель для модели Product.
     """
 
-    list_display = ("name", "price", "category", "subcategory", "thumbnail",)
+    list_display = (
+        "name",
+        "price",
+        "category",
+        "subcategory",
+        "thumbnail",
+    )
     list_display_links = ("name",)
 
 
@@ -37,7 +44,11 @@ class CategoryAdmin(admin.ModelAdmin):
     Базовая админ-панель для модели Category.
     """
 
-    list_display = ("name", "slug", "image",)
+    list_display = (
+        "name",
+        "slug",
+        "image",
+    )
     inlines = (ProductInline,)
 
 
@@ -47,4 +58,8 @@ class SubCategoryAdmin(admin.ModelAdmin):
     Базовая админ-панель для модели SubCategory.
     """
 
-    list_display = ("name", "slug", "category",)
+    list_display = (
+        "name",
+        "slug",
+        "category",
+    )
