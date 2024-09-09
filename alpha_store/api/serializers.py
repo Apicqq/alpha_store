@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
 
 from store.models import (
@@ -41,7 +42,8 @@ class ProductListSerializer(serializers.ModelSerializer):
             "images",
         )
 
-    def get_images(self, obj):
+    @swagger_serializer_method(serializer_or_field=serializers.DictField)
+    def get_images(self, obj) -> dict[str, str | None]:
         images = dict()
         for field in ("thumbnail", "medium_image", "large_image"):
             try:
@@ -83,41 +85,6 @@ class CategorySerializer(serializers.ModelSerializer):
         )
 
 
-class ShoppingCartGetSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для модели ShoppingCart.
-
-    Реализованы такие дополнительне поля, как products (отвечаает за вывод
-    списка продуктов в корзине), amount_of_products (отображает общее
-    количество продуктов в корзине пользователя), и total_price (это поле
-    рассчитывает стоимость всех продуктов в корзине, учитывая их количество).
-    """
-
-    products = serializers.SerializerMethodField("get_products")
-    amount_of_products = serializers.SerializerMethodField(
-        "get_amount_of_products"
-    )
-    total_price = serializers.SerializerMethodField("get_total_price")
-
-    def get_products(self, obj):
-        instance = ShoppingCart.objects.get(user=self.context["request"].user)
-        return ShoppingCartItemSerializer(
-            instance.cart_items.all(), context=self.context, many=True
-        ).data
-
-    def get_amount_of_products(self, obj):
-        return obj.cart_items.count()
-
-    def get_total_price(self, obj):
-        return sum(
-            item.product.price * item.quantity for item in obj.cart_items.all()
-        )
-
-    class Meta:
-        model = ShoppingCart
-        fields = ("products", "amount_of_products", "total_price")
-
-
 class ShoppingCartItemSerializer(serializers.ModelSerializer):
     """
     Сериализатор для продукта, находящегося в продуктовой корзине.
@@ -155,3 +122,41 @@ class ShoppingCartItemSerializer(serializers.ModelSerializer):
                 cart=cart, product=product, quantity=quantity
             )
         return item
+
+
+class ShoppingCartGetSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели ShoppingCart.
+
+    Реализованы такие дополнительне поля, как products (отвечаает за вывод
+    списка продуктов в корзине), amount_of_products (отображает общее
+    количество продуктов в корзине пользователя), и total_price (это поле
+    рассчитывает стоимость всех продуктов в корзине, учитывая их количество).
+    """
+
+    products = serializers.SerializerMethodField("get_products")
+    amount_of_products = serializers.SerializerMethodField(
+        "get_amount_of_products"
+    )
+    total_price = serializers.SerializerMethodField("get_total_price")
+
+    @swagger_serializer_method(serializer_or_field=ShoppingCartItemSerializer)
+    def get_products(self, obj):
+        instance = ShoppingCart.objects.get(user=self.context["request"].user)
+        return ShoppingCartItemSerializer(
+            instance.cart_items.all(), context=self.context, many=True
+        ).data
+
+    @swagger_serializer_method(serializer_or_field=serializers.IntegerField)
+    def get_amount_of_products(self, obj) -> int:
+        return obj.cart_items.count()
+
+    @swagger_serializer_method(serializer_or_field=serializers.IntegerField)
+    def get_total_price(self, obj) -> int:
+        return sum(
+            item.product.price * item.quantity for item in obj.cart_items.all()
+        )
+
+    class Meta:
+        model = ShoppingCart
+        fields = ("products", "amount_of_products", "total_price")

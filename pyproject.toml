@@ -12,6 +12,7 @@ djangorestframework = "^3.15.2"
 pillow = "^10.4.0"
 djoser = "^2.2.3"
 black = "^24.8.0"
+drf-yasg = "^1.21.7"
 
 
 [build-system]

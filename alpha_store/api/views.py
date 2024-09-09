@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
@@ -48,6 +49,9 @@ class ProductViewSet(ReadOnlyModelViewSet):
         detail=True, methods=("post",), permission_classes=(IsAuthenticated,)
     )
     def cart(self, request, *args, **kwargs):
+        """
+        Добавить объект продукта в корзину.
+        """
         return _add_to_shopping_cart(
             pk=self.get_object().pk,
             request=request,
@@ -57,12 +61,18 @@ class ProductViewSet(ReadOnlyModelViewSet):
 
     @cart.mapping.delete
     def remove_from_shopping_cart(self, request, pk):
+        """
+        Удалить объект продукта из корзины.
+        """
         return _delete_from_shopping_cart(
             pk=pk, request=request, model=ShoppingCartItem
         )
 
     @cart.mapping.patch
     def change_quantity(self, request, *args, **kwargs):
+        """
+        Изменить количество товара в корзине.
+        """
         return _adjust_quantity(
             pk=self.get_object().pk,
             request=request,
@@ -99,6 +109,9 @@ class ShoppingCartViewSet(ReadOnlyModelViewSet):
         detail=False, methods=("post",), permission_classes=(IsAuthenticated,)
     )
     def clear(self, request):
+        """
+        Очистить корзину с товарами.
+        """
         for product in ShoppingCartItem.objects.filter(
             cart=request.user.shopping_cart.first()
         ):
