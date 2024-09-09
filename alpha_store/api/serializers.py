@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from store.models import Product, ShoppingCart, ShoppingCartItem
+from store.models import Product, ShoppingCart, ShoppingCartItem, Category, \
+    SubCategory
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -33,11 +34,19 @@ class ProductListSerializer(serializers.ModelSerializer):
                 images[field] = None
         return images
 
+class SubCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SubCategory
+        fields = ("id", "name", "slug")
+
 
 class CategorySerializer(serializers.ModelSerializer):
+    subcategories = SubCategorySerializer(many=True, read_only=True)
+
     class Meta:
-        model = Product
-        fields = "__all__"
+        model = Category
+        fields = ("id", "name", "slug", "image", "subcategories",)
 
 
 class ShoppingCartGetSerializer(serializers.ModelSerializer):

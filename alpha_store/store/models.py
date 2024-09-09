@@ -67,7 +67,8 @@ class SubCategory(BaseNameSlugModel):
     category = models.ForeignKey(
         Category,
         verbose_name="Категория",
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="subcategories"
     )
 
     class Meta:
